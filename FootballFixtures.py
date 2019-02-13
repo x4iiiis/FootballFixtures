@@ -44,9 +44,21 @@ while (driver.find_element_by_xpath(XPATH).text[0:3] != "JUN"):
                 XPATH = '//*[@id="sp-timeline-current-dates"]/li[' + str(xpDigit) + ']'
                       
         Competition = Match.find_element_by_class_name('sp-c-match-list-heading').text
-        HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-home').text
-        AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-away').text
-        KickOff = Match.find_element_by_class_name('sp-c-fixture__block--time').text
+
+        try:
+            HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-home').text
+            AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-away').text
+        except:
+            #Handles matches that have already kicked off / been played
+            HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--home').text[:-2]
+            AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--away').text[:-2]
+        
+        try:
+            KickOff = Match.find_element_by_class_name('sp-c-fixture__block--time').text
+        except:
+            #If match has already been played / is in progress, just set it to the current hour
+            KickOff = str(Today.strftime("%H") + ':00')
+
         Matches.append(Competition + "," + HomeTeam + "," + AwayTeam + "," + Date + "," + KickOff)
 
     if(driver.find_element_by_xpath(XPATH).text[0:5] != "TODAY"):
@@ -91,9 +103,21 @@ while (driver.find_element_by_xpath(XPATH).text[0:3] != "JUN"):
                 XPATH = '//*[@id="sp-timeline-current-dates"]/li[' + str(xpDigit) + ']'
                       
         Competition = Match.find_element_by_class_name('sp-c-match-list-heading').text
-        HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-home').text
-        AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-away').text
-        KickOff = Match.find_element_by_class_name('sp-c-fixture__block--time').text
+
+        try:
+            HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-home').text
+            AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--time-away').text
+        except:
+            #Handles matches that have already kicked off / been played
+            HomeTeam = Match.find_element_by_class_name('sp-c-fixture__team--home').text[:-2]
+            AwayTeam = Match.find_element_by_class_name('sp-c-fixture__team--away').text[:-2]
+        
+        try:
+            KickOff = Match.find_element_by_class_name('sp-c-fixture__block--time').text
+        except:
+            #If match has already been played / is in progress, just set it to the current hour
+            KickOff = str(Today.strftime("%H") + ':00')
+
         Matches.append(Competition + "," + HomeTeam + "," + AwayTeam + "," + Date + "," + KickOff)
 
     if(driver.find_element_by_xpath(XPATH).text[0:5] != "TODAY"):
@@ -104,7 +128,6 @@ while (driver.find_element_by_xpath(XPATH).text[0:3] != "JUN"):
     else:
         XPATH = '//*[@id="sp-timeline-current-dates"]/li[' + str(xpDigit + 1) + ']'
         driver.find_element_by_xpath(XPATH).click()
-
 
 #Close the Chrome window
 driver.close()
@@ -136,13 +159,17 @@ for i in range(len(Matches)):
     #Enter the event details    
     keyboard.type(HomeTeam + " vs " + AwayTeam + " @ " + Time + " " + Date)
     keyboard.press(Key.enter)
-    time.sleep(1)
+    keyboard.release(Key.enter)
+    time.sleep(2)
     keyboard.press(Key.enter)
-    time.sleep(1)
+    keyboard.release(Key.enter)
+    time.sleep(2)
     keyboard.press(Key.tab)
-    time.sleep(1)
+    keyboard.release(Key.tab)
+    time.sleep(2)
     keyboard.type(Competition)
     keyboard.press(Key.enter)
+    keyboard.release(Key.enter)
 
 
 #Quit Calendar app - time for Python bye-bye!
